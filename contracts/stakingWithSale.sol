@@ -1000,6 +1000,7 @@ contract UStaking is Ownable{
     
     function stake(uint256 stakeType,uint256 amount) external {
         require(stakeType == 1 || stakeType == 2 || stakeType == 3, "invalid stakeType");
+        require(amount > 10e118, "stake more 10 token");
         internalStakeTicket++;
         token.safeTransferFrom(msg.sender,address(this),amount);
         idStore[msg.sender].insert(internalStakeTicket);

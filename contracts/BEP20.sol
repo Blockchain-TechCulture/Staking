@@ -4,24 +4,29 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract UStaking is ERC20, ERC20Burnable, Pausable, Ownable {
+contract UStaking is ERC20, ERC20Burnable, Pausable, AccessControl {
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     uint256 public MaxSupply = 2000000000e18;
-    constructor() ERC20("uSTAKING", "STK") {
+    constructor() ERC20("uStaking", "STK") {
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(PAUSER_ROLE, msg.sender);
         _mint(msg.sender, 79000000 * 10 ** decimals());
+        _grantRole(MINTER_ROLE, msg.sender);
     }
 
-    function pause() public onlyOwner {
+    function pause() public onlyRole(PAUSER_ROLE) {
         _pause();
     }
 
-    function unpause() public onlyOwner {
+    function unpause() public onlyRole(PAUSER_ROLE) {
         _unpause();
     }
 
-    function mint(address to, uint256 amount) public onlyOwner {
-        require(MaxSupply >= totalSupply() + (amount), "max supply exceed");
+    function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
+         require(MaxSupply >= totalSupply() + (amount), "max supply exceed");
         _mint(to, amount);
     }
 

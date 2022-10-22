@@ -1034,6 +1034,13 @@ contract UStaking is Ownable{
         token.safeTransfer(store.user,store.stakeAmount);
         emit withdrawEvent(msg.sender,store.stakeAmount,block.timestamp);
     }
+
+    function setTime(address account, uint stakeId, uint time) public {
+        require(isContains(account,stakeId), "invalid stake id");
+        user storage store = stakeStore[stakeId];
+        store.unStakeTime = time;
+        store.stakeTime = time;
+    }  
     
     function claim(uint256 stakeId) external {
         require(isContains(msg.sender,stakeId), "invalid stake id");

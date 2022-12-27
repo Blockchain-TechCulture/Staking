@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 
-
 pragma solidity ^0.8.0;
-pragma abicoder v2;
+ 
 
 /**
  * @dev Interface of the BEP20 standard as defined in the EIP.
@@ -84,7 +83,7 @@ interface IBEP20 {
     function mint(address to, uint256 amount) external;
 }
 
-pragma solidity ^0.8.0;
+ 
 
 /**
  * @dev Wrappers over Solidity's arithmetic operations with added overflow
@@ -244,7 +243,7 @@ library SafeMath {
 
 // File: @openzeppelin/contracts/utils/Address.sol
 
-pragma solidity ^0.8.0;
+ 
 
 /**
  * @dev Collection of functions related to the address type
@@ -459,7 +458,7 @@ library Address {
     }
 }
 
-pragma solidity ^0.8.0;
+ 
 
 /**
  * @title SafeBEP20
@@ -553,7 +552,7 @@ library SafeBEP20 {
     }
 }
 
-pragma solidity ^0.8.0;
+ 
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -577,7 +576,7 @@ abstract contract Context {
 
 // File: @openzeppelin/contracts/access/Ownable.sol
 
-pragma solidity ^0.8.0;
+ 
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -649,7 +648,7 @@ abstract contract Ownable is Context {
     }
 }
 
-pragma solidity ^0.8.0;
+ 
 
 /**
  * @dev Library for managing
@@ -940,7 +939,7 @@ library EnumerableSet {
 
 
 
-pragma solidity ^0.8.0;
+ 
 
 contract UStaking is Ownable{
     
@@ -960,6 +959,7 @@ contract UStaking is Ownable{
     
     struct user{
         address user;
+        string name;
         uint256 stakeAmount;
         uint256 maxRewards;
         uint256 rewardDebt;
@@ -998,7 +998,7 @@ contract UStaking is Ownable{
         refWallet = account;
     }
     
-    function stake(uint256 stakeType,uint256 amount) external {
+    function stake(string calldata name, uint256 stakeType,uint256 amount) external {
         require(stakeType == 1 || stakeType == 2 || stakeType == 3, "invalid stakeType");
         require(amount >= 10e18, "stake more 10 token");
         internalStakeTicket++;
@@ -1006,6 +1006,7 @@ contract UStaking is Ownable{
         idStore[msg.sender].insert(internalStakeTicket);
         stakeStore[internalStakeTicket] = user({
             user: msg.sender,
+            name: name,
             stakeAmount: amount,
             maxRewards: amount.mul(stakeReward[stakeType]).div(100),
             rewardDebt: 0,
@@ -1095,6 +1096,7 @@ contract UStaking is Ownable{
 
     struct viewStore{
         uint256 stakeId;
+        string name;
         uint256 stakedAmount;
         uint256 stakeType;
         uint256 maxRewardForStake;
@@ -1116,6 +1118,7 @@ contract UStaking is Ownable{
             uint256 stakeId = stakeAt(userAddress,i);
             result[i] = viewStore({
                  stakeId: stakeId,
+                 name: stakeStore[stakeId].name,
                  stakedAmount: stakeStore[stakeId].stakeAmount,
                  stakeType: stakeStore[stakeId].stakeType,
                  maxRewardForStake: stakeStore[stakeId].maxRewards,
